@@ -64,8 +64,10 @@ public class PathFinder {
         int yEnd = (int) Math.min(gH, (gameHandler.getCamera().getCameraY() + gameHandler.getGameHeight()) / Tiles.tileHeight + 1);
         for(int y = yStart; y<yEnd; y++) {
             for(int x = xStart; x<xEnd; x++) {
-
-                hashTable.put(nodes[x][y], 5000);
+                Node n = nodes[x][y];
+                if(Tiles.isSolid(n.getId()))//com player cant see solid blocks
+                    continue;
+                hashTable.put(n, 5000);
             }
 
         }
@@ -129,6 +131,8 @@ public class PathFinder {
             for(Node n : currentNode.getConnections()) {
 
                 int tempScore = gScore.get(currentNode) + 1;
+                if(gScore.get(n) == null)
+                    continue;
                 if(tempScore < gScore.get(n)) {
                     cameFrom.put(n, currentNode);
                     gScore.put(n, tempScore);

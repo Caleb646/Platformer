@@ -9,12 +9,14 @@ public class Enemy extends DynamicSprite {
     private int vision = 50;
 
     private float startX;
+    private float startY;
     private int patrolDistance;
     private float patrolSpeed = 1.0f;
 
     public Enemy(GameHandler gameHandler, float x, float y, int w, int h) {
         super(gameHandler, x, y, w, h);
         startX = x;
+        startY = y;
         patrolDistance = 100;
         jumpHeight = 18.0f;
     }
@@ -25,7 +27,7 @@ public class Enemy extends DynamicSprite {
 
         if(canSee()) {
 
-            moveToPlayer();
+            moveTo();
         }
 
         else {
@@ -45,6 +47,12 @@ public class Enemy extends DynamicSprite {
     }
 
     public void patrol() {
+        
+        //TODO add a return method so the com player returns to its starting position after chasing
+
+        // ArrayList<Node> path = gameHandler.getPathFinder().findPath((int) startX, (int) startY, (int) pos.getX(), (int) pos.getY());
+        // if(path != null)
+        //     currentPath = path;
 
         if(pos.getX() > startX+patrolDistance || pos.getX() < startX-patrolDistance) {
             patrolSpeed *= -1;
@@ -52,8 +60,12 @@ public class Enemy extends DynamicSprite {
         velocity.addX(patrolSpeed);
     }
 
-    public void moveToPlayer() {
-        Node nextNode = currentPath.remove(0);
+    public void moveTo() {
+
+        Node nextNode = getNextNode();
+
+        if(nextNode == null)
+            return;
         if(nextNode.getxPos()*Tiles.tileWidth > pos.getX()) {
             velocity.addX(attackSpeed);
         }
@@ -65,10 +77,6 @@ public class Enemy extends DynamicSprite {
         }
         if(nextNode.getyPos()*Tiles.tileHeight + this.spriteHeight < pos.getY()) {//up
             jump();
-        }
-        if(this.gameHandler.getPathFinder().heuristic((int)pos.getX(), (int)pos.getX(), nextNode.getxPos(), nextNode.getyPos()) < 5 && currentPath.size() > 2) {
-            System.out.println("Switching");
-            nextNode = currentPath.remove(1);
         }
     }
 
@@ -83,5 +91,17 @@ public class Enemy extends DynamicSprite {
         }
         currentPath.clear();
         return false;
+    }
+
+    public Node getNextNode() {
+        if(currentPath.size() > 2) {
+            return currentPath.remove(currentPath.size()-2);
+        }
+        else if(currentPath.size() > 1) {
+            return currentPath.remove(0);
+        }
+        else {
+            return null;
+        }
     }
 }

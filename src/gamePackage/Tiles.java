@@ -9,6 +9,7 @@ public class Tiles {
     public static Tiles[] tileTypes = new Tiles[5];
     public static Tiles blankTile = new BlankTile(0);
     public static Tiles floorTile = new FloorTile(1);
+    public static Tiles enemyTile = new EnemyTile(3);
 
     protected BufferedImage image;
     protected final int id;
@@ -25,6 +26,14 @@ public class Tiles {
 
     public void render(Graphics2D g2d) {
 
+    }
+
+    public static boolean isSolid(int id) {
+        if(id == 0)
+            return false;
+        else {
+            return true;
+        }
     }
 
     public boolean isSolid() {
@@ -58,6 +67,13 @@ class FloorTile extends Tiles {
 class BlankTile extends Tiles {
 
     public BlankTile(int id) {
+        super(null, id);
+    }
+}
+
+class EnemyTile extends Tiles {
+
+    public EnemyTile(int id) {
         super(null, id);
     }
 }

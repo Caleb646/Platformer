@@ -18,12 +18,12 @@ public class WorldHandler {
 
         PathFinder pather = new PathFinder(gameHandler);
         Player p = new Player(gameHandler, 500, 100, 20, 20);
-        Enemy e = new Enemy(gameHandler, 200, 100, 20, 20);
+        
 
 
         spriteManager = new SpriteManager(gameHandler);
         spriteManager.addSprite(p);
-        spriteManager.addSprite(e);
+        
 
         currentLvl = path;
         loadLevel();
@@ -62,6 +62,11 @@ public class WorldHandler {
         for(int y = 0; y<gameHeight; y++) {
             for(int x = 0; x<gameWidth; x++) {
                 worldTiles[x][y] = Integer.parseInt(lvlInfo[(x+y*gameWidth)+2]);
+
+                if(Integer.parseInt(lvlInfo[(x+y*gameWidth)+2]) == 3) {//create enemies if map space is a 3
+                    Enemy e = new Enemy(gameHandler, x*Tiles.tileWidth, y*Tiles.tileHeight, 20, 20);
+                    spriteManager.addSprite(e);
+                }
             }
         }
         this.gameHandler.getPathFinder().createNodes();//creates node and edges graph
