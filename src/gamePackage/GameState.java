@@ -8,7 +8,7 @@ public class GameState extends StateHandler {
 
     public GameState(GameHandler handler) {
         this.gameHandler = handler;
-        this.worldHandler = new WorldHandler(gameHandler, "TestWorld.txt");
+        this.worldHandler = new WorldHandler(gameHandler, "TestWorld2.txt");
         //this.gameHandler.setWorldHandler(worldHandler);
     }
 

@@ -17,8 +17,8 @@ public class WorldHandler {
 
 
         PathFinder pather = new PathFinder(gameHandler);
-        Player p = new Player(gameHandler, 100, 100, 20, 20);
-        Enemy e = new Enemy(gameHandler, 400, 100, 20, 20);
+        Player p = new Player(gameHandler, 500, 100, 20, 20);
+        Enemy e = new Enemy(gameHandler, 200, 100, 20, 20);
 
 
         spriteManager = new SpriteManager(gameHandler);
@@ -38,8 +38,13 @@ public class WorldHandler {
     }
 
     public void render(Graphics2D g2d) {
-        for(int x = 0; x<gameWidth; x++) {
-            for(int y = 0; y<gameHeight; y++) {
+        //checks to see where the player is in relation to the map and then only renders that area
+        int xStart = (int) Math.max(0, gameHandler.getCamera().getCameraX() / Tiles.tileWidth);
+        int xEnd = (int) Math.min(gameWidth, (gameHandler.getCamera().getCameraX() + gameHandler.getGameWidth()) / Tiles.tileWidth + 1);
+        int yStart = (int) Math.max(0, gameHandler.getCamera().getCameraY() / Tiles.tileHeight);
+        int yEnd = (int) Math.min(gameHeight, (gameHandler.getCamera().getCameraY() + gameHandler.getGameHeight()) / Tiles.tileHeight + 1);
+        for(int y = yStart; y<yEnd; y++) {
+            for(int x = xStart; x<xEnd; x++) {
                 if(getTileType(x, y).getImage() == null)
                     continue;
                 g2d.drawImage(getTileType(x, y).getImage(), (int) (x*Tiles.tileWidth-gameHandler.getCamera().getCameraX()),
@@ -54,12 +59,13 @@ public class WorldHandler {
         gameWidth = Integer.parseInt(lvlInfo[0]);
         gameHeight = Integer.parseInt(lvlInfo[1]);
         worldTiles = new int[gameWidth][gameHeight];
-        for(int x = 0; x<gameWidth; x++) {
-            for(int y = 0; y<gameHeight; y++) {
+        for(int y = 0; y<gameHeight; y++) {
+            for(int x = 0; x<gameWidth; x++) {
                 worldTiles[x][y] = Integer.parseInt(lvlInfo[(x+y*gameWidth)+2]);
             }
         }
         this.gameHandler.getPathFinder().createNodes();//creates node and edges graph
+        //this.gameHandler.getPathFinder().printGraph();
     }
 
     //getters and setters

@@ -28,6 +28,12 @@ public class DynamicSprite extends Sprite {
         return tileCollision((int) ((pos.getX()+ spriteWidth / 2) /Tiles.tileWidth), (int) (pos.getY()+spriteHeight+5)/Tiles.tileHeight);
     }
 
+    public void jump() {
+        if(onGround()) {
+            velocity.addY(-jumpHeight);
+        }
+    }
+
     public void move() {
 
         if(canMoveX()) {

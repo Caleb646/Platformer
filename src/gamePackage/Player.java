@@ -28,8 +28,8 @@ public class Player extends DynamicSprite {
             velocity.addX(-xSpeed);
         }
 
-        if(k.SPACE && onGround()) {//checks if player is on the ground
-            velocity.addY(-jumpHeight);
+        if(k.SPACE) {
+            jump();
         }
 
         velocity.addY(gravity.getY());

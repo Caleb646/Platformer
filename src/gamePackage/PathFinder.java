@@ -23,13 +23,25 @@ public class PathFinder {
         int gH = this.gameHandler.getWorldHandler().getGameHeight();
         nodes = new Node[gW][gH];
 
-        for(int x = 1; x<gW-1; x++) {//leaves out the edges of the map
-            for(int y = 1; y<gH-1; y++) {
-                Node n = nodes[x][y] = new Node(this.gameHandler.getWorldHandler().getTileType(x, y).getId(), x, y);//node has same id as tile
-                Node n1 = nodes[x+1][y] = new Node(this.gameHandler.getWorldHandler().getTileType(x+1, y).getId(), x+1, y);//right neighbor
-                Node n2 = nodes[x][y+1] = new Node(this.gameHandler.getWorldHandler().getTileType(x, y+1).getId(), x, y+1);//bottom neighbor
-                Node n3 = nodes[x-1][y]; //left
-                Node n4 = nodes[x][y-1]; //top
+        for(int y = 0; y<gH; y++) {
+            for(int x = 0; x<gW; x++) {
+                nodes[x][y] = new Node(this.gameHandler.getWorldHandler().getTileType(x, y).getId(), x, y);//node has same id as tile
+            }
+        }
+
+        for(int y = 0; y<gH; y++) {
+            for(int x = 0; x<gW; x++) {
+                int xSub = x-1 < 0 ? x : x-1;
+                int ySub = y-1 < 0 ? y : y-1;
+                int xPlus = x+1 > gW-1 ? x : x+1;
+                int yPlus = y+1 > gH-1 ? y : y+1;
+
+                Node n = nodes[x][y];
+                Node n1 = nodes[xPlus][y];
+                Node n2 = nodes[x][yPlus];
+                Node n3 = nodes[xSub][y]; 
+                Node n4 = nodes[x][ySub];
+                
                 n.addConnection(n1);
                 n.addConnection(n2);
                 n.addConnection(n3);
@@ -38,20 +50,27 @@ public class PathFinder {
         }
     }
 
-    public Hashtable<Node, Integer> initGscore() {
+    public Hashtable<Node, Integer> setupHashTable() {
 
-        Hashtable<Node, Integer> gScore = new Hashtable<Node, Integer>();
+        
 
         int gW = this.gameHandler.getWorldHandler().getGameWidth();
         int gH = this.gameHandler.getWorldHandler().getGameHeight();
+        Hashtable<Node, Integer> hashTable = new Hashtable<Node, Integer>();
+        //only search the nodes within the screen not the whole map.
+        int xStart = (int) Math.max(0, gameHandler.getCamera().getCameraX() / Tiles.tileWidth);
+        int xEnd = (int) Math.min(gW, (gameHandler.getCamera().getCameraX() + gameHandler.getGameWidth()) / Tiles.tileWidth + 1);
+        int yStart = (int) Math.max(0, gameHandler.getCamera().getCameraY() / Tiles.tileHeight);
+        int yEnd = (int) Math.min(gH, (gameHandler.getCamera().getCameraY() + gameHandler.getGameHeight()) / Tiles.tileHeight + 1);
+        for(int y = yStart; y<yEnd; y++) {
+            for(int x = xStart; x<xEnd; x++) {
 
-        for(int x = 1; x<gW-1; x++) {
-            for(int y = 1; y<gH-1; y++) {
-                gScore.put(nodes[x][y], 5000);
+                hashTable.put(nodes[x][y], 5000);
             }
+
         }
 
-        return gScore;
+        return hashTable;
         
     }
 
@@ -62,6 +81,7 @@ public class PathFinder {
 
     public ArrayList<Node> buildPath(Hashtable<Node, Node> cameFrom, Node currentNode) {
         ArrayList<Node> path = new ArrayList<Node>();
+        path.add(currentNode);
         while(cameFrom.containsKey(currentNode)) {
             currentNode = cameFrom.get(currentNode);
             path.add(currentNode);
@@ -84,9 +104,9 @@ public class PathFinder {
         PriorityQueue<Data> openSet = new PriorityQueue<Data>();
         openSet.add(data);
 
-        Hashtable<Node, Integer> gScore = initGscore();
+        Hashtable<Node, Integer> gScore = setupHashTable();
         gScore.put(startNode, 0);
-        Hashtable<Node, Integer> fScore = initGscore();
+        Hashtable<Node, Integer> fScore = setupHashTable();
         fScore.put(startNode, heuristic(normX, normY, normTargetX, normTargetY));
 
         Hashtable<Node, Node> cameFrom = new Hashtable<Node, Node>();
@@ -109,8 +129,7 @@ public class PathFinder {
             for(Node n : currentNode.getConnections()) {
 
                 int tempScore = gScore.get(currentNode) + 1;
-                int currentScore = gScore.get(n) == null ? 1 : gScore.get(n);
-                if(tempScore < currentScore) {
+                if(tempScore < gScore.get(n)) {
                     cameFrom.put(n, currentNode);
                     gScore.put(n, tempScore);
                     fScore.put(n, tempScore +(heuristic(n.getxPos(), n.getyPos(), normTargetX, normTargetY)));
@@ -137,12 +156,27 @@ public class PathFinder {
             Node n2 = path.get(i+1);
 
             int x1 = xPoints[i] = ((int) ((n1.getxPos()*Tiles.tileWidth)-gameHandler.getCamera().getCameraX()));
-            int y1 = yPoints[i] = ((int) ((n1.getyPos()*Tiles.tileHeight)-gameHandler.getCamera().getCameraY()));
+            int y1 = yPoints[i] = ((int) (((n1.getyPos()*Tiles.tileHeight)-gameHandler.getCamera().getCameraY())+this.gameHandler.getPlayer().getHeight()));
             int x2 = xPoints[i+1] = ((int) ((n2.getxPos()*Tiles.tileWidth)-gameHandler.getCamera().getCameraX()));
-            int y2 = yPoints[i+1] = ((int) ((n2.getyPos()*Tiles.tileHeight)-gameHandler.getCamera().getCameraY()));
+            int y2 = yPoints[i+1] = ((int) (((n2.getyPos()*Tiles.tileHeight)-gameHandler.getCamera().getCameraY())+this.gameHandler.getPlayer().getHeight()));
             g2d.drawLine(x1, y1, x2, y2);
         }
         //g2d.drawPolyline(xPoints, yPoints, xPoints.length);
+    }
+
+    public void printGraph() {
+        int gW = this.gameHandler.getWorldHandler().getGameWidth();
+        int gH = this.gameHandler.getWorldHandler().getGameHeight();
+        String line = "";
+
+        for(int y = 0; y<gH; y++) {
+            line += " r: "+y+"  ";
+            for(int x = 0; x<gW; x++) {
+                line += " "+nodes[x][y].getId()+" ";
+            }
+            System.out.println(line);
+            line = "";
+        }
     }
 }
 
@@ -162,8 +196,9 @@ class Node {
     }
 
     public void addConnection(Node n) {
-        if(n != null)
+        if(n != null && !n.equals(this) && !connections.contains(n)) {
             connections.add(n);
+        }
     }
     
     //getters and setters
@@ -185,6 +220,7 @@ class Node {
     }
 }
 
+
 class Data implements Comparable<Data> {
     public int fScore;
     public int count;
@@ -198,11 +234,14 @@ class Data implements Comparable<Data> {
 
     @Override
     public int compareTo(Data o) {
-        if(fScore > count)
-            return -1;
-        else if(fScore < count) {
+        //compares two elements by their fscore or estimated score
+        if(fScore > o.fScore)
             return 1;
+        else if(fScore < o.fScore) {
+            return -1;
         }
-        return 0;
+        else {
+            return 0;
+        }    
     }
 }
