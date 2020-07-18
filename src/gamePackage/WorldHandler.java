@@ -18,7 +18,7 @@ public class WorldHandler {
 
         PathFinder pather = new PathFinder(gameHandler);
         Player p = new Player(gameHandler, 100, 100, 20, 20);
-        Enemy e = new Enemy(gameHandler, 300, 100, 20, 20);
+        Enemy e = new Enemy(gameHandler, 400, 100, 20, 20);
 
 
         spriteManager = new SpriteManager(gameHandler);

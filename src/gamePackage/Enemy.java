@@ -8,7 +8,7 @@ public class Enemy extends DynamicSprite {
     private Vector2D target;
     private float distanceFromTarget;
     private float attackSpeed = 3.0f;
-    private int vision = 50;
+    private int vision = 10;
 
     private float startX;
     private float startY;
@@ -56,7 +56,9 @@ public class Enemy extends DynamicSprite {
     }
 
     public void moveToPlayer() {
-        currentPath = gameHandler.getPathFinder().findPath((int) pos.getX(), (int) pos.getY(), (int) gameHandler.getPlayer().getX(), (int) gameHandler.getPlayer().getY(), currentPath);
+        ArrayList<Node> path = gameHandler.getPathFinder().findPath((int) pos.getX(), (int) pos.getY(), (int) gameHandler.getPlayer().getX(), (int) gameHandler.getPlayer().getY());
+        if(path != null)
+            currentPath = path;
     }
 
     public boolean canSee() {

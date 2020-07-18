@@ -1,7 +1,8 @@
 package gamePackage;
 import java.util.ArrayList;
-import java.util.Queue;
-import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Hashtable;
+import java.util.HashSet;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.BasicStroke;
@@ -37,84 +38,92 @@ public class PathFinder {
         }
     }
 
-    public ArrayList<Node> findPath(int startX, int startY, int targetX, int targetY, ArrayList<Node> previousPath) {
+    public Hashtable<Node, Integer> initGscore() {
 
-        Node startNode;
-        Queue<Node> queue = new LinkedList<Node>();
-        ArrayList<Node> seen = new ArrayList<Node>();
-        ArrayList<Node> bestPath = new ArrayList<Node>();
-        ArrayList<Node> currentPath;
-        Node targetNode = nodes[(int)(targetX /Tiles.tileWidth)][(int)(targetY/Tiles.tileHeight)];
+        Hashtable<Node, Integer> gScore = new Hashtable<Node, Integer>();
 
-        int currentPathLength;
-        int bestPathLength;
+        int gW = this.gameHandler.getWorldHandler().getGameWidth();
+        int gH = this.gameHandler.getWorldHandler().getGameHeight();
 
-        boolean foundaPath = false;
-        boolean firstPathFound = false;
-
-        if(previousPath.size() < 1) {
-
-            currentPath = new ArrayList<Node>();
-            startNode = nodes[(int)(startX /Tiles.tileWidth)][(int)(startY/Tiles.tileHeight)];
-            queue.add(startNode);
-
-            currentPathLength = 0;
-            bestPathLength = 1;
+        for(int x = 1; x<gW-1; x++) {
+            for(int y = 1; y<gH-1; y++) {
+                gScore.put(nodes[x][y], 5000);
+            }
         }
 
-        else {
-            currentPath = new ArrayList<Node>();
-            previousPath.forEach(x -> currentPath.add(x));
-            startNode = previousPath.get(previousPath.size()-1);//take off last path
-            queue.add(startNode);
+        return gScore;
+        
+    }
 
-            currentPathLength = currentPath.size();
-            bestPathLength = currentPath.size() + 1;
+    public int heuristic(int startX, int startY, int targetX, int targetY) {
+
+        return Math.abs((startX-targetX)) + Math.abs((startY-targetY));
+    }
+
+    public ArrayList<Node> buildPath(Hashtable<Node, Node> cameFrom, Node currentNode) {
+        ArrayList<Node> path = new ArrayList<Node>();
+        while(cameFrom.containsKey(currentNode)) {
+            currentNode = cameFrom.get(currentNode);
+            path.add(currentNode);
         }
+        return path;
 
-        while(!queue.isEmpty()) {
+    }
 
-            if(startNode.equals(targetNode))
-                return previousPath;
+    public ArrayList<Node> findPath(int startX, int startY, int targetX, int targetY) {
+        int count = 0;
+        int normX = startX / Tiles.tileWidth;
+        int normY = startY / Tiles.tileHeight;
+        int normTargetX = targetX / Tiles.tileWidth;
+        int normTargetY = targetY / Tiles.tileHeight;
 
-            Node currentNode = queue.remove();
+        Node startNode = nodes[normX][normY];
+        Node targetNode = nodes[normTargetX][normTargetY];
 
-            currentPath.add(currentNode);
-            seen.add(currentNode);
+        Data data = new Data(0, count, startNode);
+        PriorityQueue<Data> openSet = new PriorityQueue<Data>();
+        openSet.add(data);
 
-            currentPathLength++;
+        Hashtable<Node, Integer> gScore = initGscore();
+        gScore.put(startNode, 0);
+        Hashtable<Node, Integer> fScore = initGscore();
+        fScore.put(startNode, heuristic(normX, normY, normTargetX, normTargetY));
+
+        Hashtable<Node, Node> cameFrom = new Hashtable<Node, Node>();
+
+        HashSet<Node> openSetHash = new HashSet<Node>();
+        openSetHash.add(startNode);
+
+        ArrayList<Node> path;
+
+        while(!openSet.isEmpty()) {
+
+            Node currentNode = openSet.remove().node;
+            openSetHash.remove(currentNode);
 
             if(currentNode.equals(targetNode)) {
-                bestPathLength = currentPathLength;
-                currentPath.forEach(x -> bestPath.add(x));
-                firstPathFound = true;
-                foundaPath = true;
+                path = buildPath(cameFrom, currentNode);
+                return path;
             }
 
-            if(currentPathLength < bestPathLength && foundaPath) {
-                bestPathLength = currentPathLength;
-                currentPath.forEach(x -> bestPath.add(x));
-            }
-
-            if(currentPathLength > bestPathLength && firstPathFound) {
-                //if current path is longer than best path
-                currentPathLength = 0;
-                currentPath.clear();
-                queue.clear();
-                queue.add(startNode);
-                continue;
-            }
-       
             for(Node n : currentNode.getConnections()) {
-                if(!seen.contains(n)) {
-                    queue.add(n);
+
+                int tempScore = gScore.get(currentNode) + 1;
+                int currentScore = gScore.get(n) == null ? 1 : gScore.get(n);
+                if(tempScore < currentScore) {
+                    cameFrom.put(n, currentNode);
+                    gScore.put(n, tempScore);
+                    fScore.put(n, tempScore +(heuristic(n.getxPos(), n.getyPos(), normTargetX, normTargetY)));
+                    if(!openSetHash.contains(n)){
+                        count += 1;
+                        Data newData = new Data(fScore.get(n), count, n);
+                        openSet.add(newData);
+                        openSetHash.add(n);
+                    }
                 }
             }
-            foundaPath = false;
         }
-        bestPath.forEach(x -> System.out.print(" x: "+x.getxPos()+" y: "+x.getyPos()+" "));
-        System.out.println();
-        return bestPath;
+        return null; 
     }
 
     public void drawPath(Graphics2D g2d, ArrayList<Node> path) {
@@ -126,9 +135,6 @@ public class PathFinder {
         for(int i = 0; i<path.size()-1; i+=2) {
             Node n1 = path.get(i);
             Node n2 = path.get(i+1);
-
-            // xPoints[i] = ((int) ((n1.getxPos()*Tiles.tileWidth)-gameHandler.getCamera().getCameraX()));
-            // yPoints[i] = ((int) ((n2.getyPos()*Tiles.tileHeight)-gameHandler.getCamera().getCameraY()));
 
             int x1 = xPoints[i] = ((int) ((n1.getxPos()*Tiles.tileWidth)-gameHandler.getCamera().getCameraX()));
             int y1 = yPoints[i] = ((int) ((n1.getyPos()*Tiles.tileHeight)-gameHandler.getCamera().getCameraY()));
@@ -145,7 +151,7 @@ class Node {
     private final int id;
     private ArrayList<Node> connections;
 
-    private int xPos;
+    private int xPos;// normalized position
     private int yPos;
 
     public Node(int id, int x, int y) {
@@ -176,5 +182,27 @@ class Node {
 
     public ArrayList<Node> getConnections() {
         return this.connections;
+    }
+}
+
+class Data implements Comparable<Data> {
+    public int fScore;
+    public int count;
+    public Node node;
+
+    public Data(int zc, int c, Node node) {
+        this.fScore = zc;
+        this.count = c;
+        this.node = node;
+    }
+
+    @Override
+    public int compareTo(Data o) {
+        if(fScore > count)
+            return -1;
+        else if(fScore < count) {
+            return 1;
+        }
+        return 0;
     }
 }
