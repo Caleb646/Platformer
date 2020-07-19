@@ -1,11 +1,10 @@
 package gamePackage;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Hashtable;
 
 public class KeyInputHandler implements KeyListener {
 
-    public boolean UP, DOWN, RIGHT, LEFT, GROUND, SPACE;
+    public boolean UP, DOWN, RIGHT, LEFT, GROUND, SPACE, SHOOT;
 
     public KeyInputHandler() {
 
@@ -33,6 +32,9 @@ public class KeyInputHandler implements KeyListener {
             case KeyEvent.VK_S: 
                 DOWN = true;
                 break;
+            // case KeyEvent.VK_F: 
+            //     SHOOT = true;
+            //     break;
         }
     }
 
@@ -53,6 +55,10 @@ public class KeyInputHandler implements KeyListener {
             case KeyEvent.VK_S: 
                 DOWN = false;
                 break;
+
+            // case KeyEvent.VK_F: 
+            //     SHOOT = false;
+            //     break;
         }
     }
 

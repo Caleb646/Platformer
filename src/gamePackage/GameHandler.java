@@ -21,16 +21,22 @@ public class GameHandler {
     //handlers
     private WorldHandler worldHandler;
     private KeyInputHandler keyInputHandler;
+    private MouseInputHandler mouseInputHandler;
 
     //managers
     private SpriteManager spriteManager;
 
-    public GameHandler(GameView game, KeyInputHandler keyInputHandler) {
+    public GameHandler(GameView game, KeyInputHandler keyInputHandler, MouseInputHandler m) {
         this.game = game;
         this.keyInputHandler = keyInputHandler;
+        this.mouseInputHandler = m;
     }
 
     // getters and setters
+
+    public MouseInputHandler getMouseInputHandler() {
+        return this.mouseInputHandler;
+    }
 
     public void setG2D(Graphics2D g2d) {
         this.g2d = g2d;

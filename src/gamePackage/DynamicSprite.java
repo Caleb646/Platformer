@@ -3,10 +3,18 @@ package gamePackage;
 import java.awt.Graphics2D;
 
 public class DynamicSprite extends Sprite {
+
     protected Vector2D velocity;
     protected float xSpeed = 4.0f;
     protected int maxSpeed = 10;
     protected float jumpHeight = 15.0f;
+
+    //attack timing
+    protected long currentAttackTime = System.currentTimeMillis();
+    protected long lastAttackTime = System.currentTimeMillis();
+    protected long deltaAttackTime = 0l;
+    protected int attackInterval = 4000;
+    protected boolean attacking = false;
 
     public DynamicSprite(GameHandler gameHandler, float x, float y, int w, int h) {
         super(gameHandler, x, y, w, h);
@@ -21,6 +29,33 @@ public class DynamicSprite extends Sprite {
     @Override
     public void render(Graphics2D g2d) {
 
+    }
+
+    public void hurt() {
+        //takeHealth(1);
+        if(health < 1)
+            die();
+    }
+
+    public void die() {
+        setAlive(false);
+    }
+
+    public boolean canAttack() {
+        currentAttackTime = System.currentTimeMillis();
+        deltaAttackTime += currentAttackTime - lastAttackTime;
+
+        if(deltaAttackTime > attackInterval) {
+            //System.out.println("Attacking: " + deltaAttackTime );
+            setAttacking(true);
+            lastAttackTime = currentAttackTime;
+            deltaAttackTime = 0;
+            return true;
+        }
+        else {
+            setAttacking(false);
+            return false;
+        }
     }
 
     public boolean onGround() {
@@ -99,6 +134,10 @@ public class DynamicSprite extends Sprite {
 
     public void setVelocity(Vector2D v) {
         this.velocity = v;
+    }
+
+    public void setAttacking(boolean b) {
+        this.attacking = b;
     }
     
 }

@@ -11,6 +11,7 @@ public class GameView {
     private GameHandler gameHandler;
     private WorldHandler worldHandler;
     private KeyInputHandler keyInputHandler;
+    private MouseInputHandler mouseInputHandler;
 
     private Camera camera;
 
@@ -37,10 +38,13 @@ public class GameView {
         keyInputHandler = new KeyInputHandler();
         this.screen.addKeyListener(keyInputHandler);
 
+        mouseInputHandler = new MouseInputHandler();
+        this.screen.addMouseListener(mouseInputHandler);
+
         this.offScreenBuffer = screen.createImage(width, height);
 
 
-        this.gameHandler = new GameHandler(this, keyInputHandler);
+        this.gameHandler = new GameHandler(this, keyInputHandler, mouseInputHandler);
         camera = new Camera(this.gameHandler, 0, 0);
 
 

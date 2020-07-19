@@ -15,9 +15,18 @@ public class SpriteManager {
     }
 
     public void update() {
-        for(Sprite s : currentSprites) {
+
+        for(int i = currentSprites.size()-1; i>-1; i--) {
+            Sprite s = currentSprites.get(i);
+            if(!s.isAlive()) {
+                currentSprites.remove(s);
+                return;
+            }
             s.update();
         }
+        // for(Sprite s : currentSprites) {
+        //     s.update();
+        // }
     }
 
     public void render(Graphics2D g2d) {

@@ -17,7 +17,7 @@ public class WorldHandler {
 
 
         PathFinder pather = new PathFinder(gameHandler);
-        Player p = new Player(gameHandler, 500, 100, 20, 20);
+        Player p = new Player(gameHandler, 500, 100, 30, 30);
         
 
 
@@ -64,7 +64,7 @@ public class WorldHandler {
                 worldTiles[x][y] = Integer.parseInt(lvlInfo[(x+y*gameWidth)+2]);
 
                 if(Integer.parseInt(lvlInfo[(x+y*gameWidth)+2]) == 3) {//create enemies if map space is a 3
-                    Enemy e = new Enemy(gameHandler, x*Tiles.tileWidth, y*Tiles.tileHeight, 20, 20);
+                    Enemy e = new Enemy(gameHandler, x*Tiles.tileWidth, y*Tiles.tileHeight, 30, 30);
                     spriteManager.addSprite(e);
                 }
             }

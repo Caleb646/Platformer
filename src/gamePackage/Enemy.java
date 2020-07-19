@@ -4,14 +4,19 @@ import java.util.ArrayList;
 
 public class Enemy extends DynamicSprite {
 
-    private ArrayList<Node> currentPath = new ArrayList<Node>();
-    private float attackSpeed = 3.0f;
-    private int vision = 50;
+    protected ArrayList<Node> currentPath = new ArrayList<Node>();
+    protected float attackSpeed = 3.0f;
+    protected int attackRange = 7;
+    protected int vision = 50;
 
-    private float startX;
-    private float startY;
-    private int patrolDistance;
-    private float patrolSpeed = 1.0f;
+    protected float startX;
+    protected float startY;
+    protected int patrolDistance;
+    protected float patrolSpeed = 1.0f;
+
+    //patrolling 
+    protected boolean left = false;
+    protected boolean right = true;
 
     public Enemy(GameHandler gameHandler, float x, float y, int w, int h) {
         super(gameHandler, x, y, w, h);
@@ -24,6 +29,7 @@ public class Enemy extends DynamicSprite {
     public void update() {
 
         velocity.setX(0);
+        
 
         if(canSee()) {
 
@@ -47,23 +53,26 @@ public class Enemy extends DynamicSprite {
     }
 
     public void patrol() {
-        
-        //TODO add a return method so the com player returns to its starting position after chasing
 
-        // ArrayList<Node> path = gameHandler.getPathFinder().findPath((int) startX, (int) startY, (int) pos.getX(), (int) pos.getY());
-        // if(path != null)
-        //     currentPath = path;
-
-        if(pos.getX() > startX+patrolDistance || pos.getX() < startX-patrolDistance) {
-            patrolSpeed *= -1;
+        if(left) { 
+            velocity.addX(-patrolSpeed);
+            if(pos.getX() < startX-patrolDistance) {
+                left = false;
+                right = true;
+            }           
         }
-        velocity.addX(patrolSpeed);
+        else if(right) {
+            velocity.addX(patrolSpeed);
+            if(pos.getX() > startX+patrolDistance) {
+                left = true;
+                right = false;
+            } 
+        }
     }
 
     public void moveTo() {
 
         Node nextNode = getNextNode();
-
         if(nextNode == null)
             return;
         if(nextNode.getxPos()*Tiles.tileWidth > pos.getX()) {
@@ -72,11 +81,16 @@ public class Enemy extends DynamicSprite {
         if(nextNode.getxPos()*Tiles.tileWidth < pos.getX()) {
             velocity.addX(-attackSpeed);
         }
-        if(nextNode.getyPos()*Tiles.tileHeight - this.spriteHeight > pos.getY()) {//below
-            //velocity.addY(jumpHeight);
-        }
-        if(nextNode.getyPos()*Tiles.tileHeight + this.spriteHeight < pos.getY()) {//up
+        // if(nextNode.getyPos()*Tiles.tileHeight - this.spriteHeight > pos.getY()) {//below
+        //     velocity.addY(fal);
+        // }
+        if(nextNode.getyPos()*Tiles.tileHeight < pos.getY() - this.gameHandler.getPlayer().getHeight()) {//up
             jump();
+        }
+        if(pos.distance(gameHandler.getPlayer().getPos()) < attackRange) {
+            if(canAttack()) {
+                gameHandler.getPlayer().hurt();
+            }
         }
     }
 

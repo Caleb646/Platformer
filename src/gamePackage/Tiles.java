@@ -9,6 +9,8 @@ public class Tiles {
     public static Tiles[] tileTypes = new Tiles[5];
     public static Tiles blankTile = new BlankTile(0);
     public static Tiles floorTile = new FloorTile(1);
+    public static Tiles spikeTile = new SpikeTile(2);
+    public static Tiles flagTile = new SpikeTile(4);
     public static Tiles enemyTile = new EnemyTile(3);
 
     protected BufferedImage image;
@@ -75,5 +77,24 @@ class EnemyTile extends Tiles {
 
     public EnemyTile(int id) {
         super(null, id);
+    }
+}
+
+class SpikeTile extends Tiles {
+
+    public SpikeTile(int id) {
+        super(GameAssets.spikeImg, id);
+    }
+
+    @Override
+    public boolean isSolid() {
+        return true;
+    }
+}
+
+class FlagTile extends Tiles {
+
+    public FlagTile(int id) {
+        super(GameAssets.flagImg, id);
     }
 }

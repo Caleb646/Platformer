@@ -93,6 +93,10 @@ public class PathFinder {
     }
 
     public ArrayList<Node> findPath(int startX, int startY, int targetX, int targetY) {
+        
+        /* DISCLAIMER: This is the A star path finding algorithm with some modifications. I used the pseudo code on wikipedia
+        to make it. */
+
         int count = 0;
         int normX = startX / Tiles.tileWidth;
         int normY = startY / Tiles.tileHeight;
