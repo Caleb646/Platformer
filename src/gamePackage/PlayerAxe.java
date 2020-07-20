@@ -4,10 +4,10 @@ import java.awt.image.BufferedImage;
 
 public class PlayerAxe extends DynamicSprite {
 
-    private float ySpeed = 2.75f;//unit speed
-    private float xSpeed = 2.75f;//unit speed
-    private float maxYSpeed = 7.0f;
-    private float maxXSpeed = 7.0f;
+    private float ySpeed = 1.75f;//unit speed
+    private float xSpeed = 1.75f;//unit speed
+    private float maxYSpeed = 4.0f;
+    private float maxXSpeed = 4.0f;
     private Vector2D target;
 
     //animations
@@ -16,19 +16,21 @@ public class PlayerAxe extends DynamicSprite {
 
     public PlayerAxe(GameHandler gameHandler, float x, float y, int w, int h, Vector2D target) {
         super(gameHandler, x, y, w, h);
-        this.target = target;
+        this.target = pos.normalize(target);//normalize vector
         aRight.setInterval(100);
-        aLeft.setInterval(100);
-        gameHandler.getSpriteManager().addSprite(this); //add this so it can be draw/rendered
+        aLeft.setInterval(100);//set animation interval   
+        gameHandler.getSpriteManager().addSprite(this); //add this so it can be drawn/rendered
         
     }
 
     public void update() {
+
+        velocity.addX(target.getX()*xSpeed);
+        velocity.addY(target.getY()*ySpeed);
+
         aRight.update();
         aLeft.update();
-        Vector2D normedV = pos.normalize(target);
-        velocity.addX(normedV.getX()*xSpeed);
-        velocity.addY(normedV.getY()*ySpeed);
+
         this.move();
     }
 

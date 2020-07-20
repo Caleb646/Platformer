@@ -1,5 +1,6 @@
 package gamePackage;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 
 public abstract class Sprite {
     protected Vector2D pos;
@@ -10,6 +11,8 @@ public abstract class Sprite {
 
     protected int health = 2;
     protected boolean alive = true;
+
+    protected boolean hit = false;//was the sprite hit with an attack?
 
     protected Vector2D gravity = new Vector2D(0, 1.0f);
 
@@ -22,6 +25,37 @@ public abstract class Sprite {
         this.spriteWidth = w;
         this.spriteHeight = h;
         pos = new Vector2D(x, y);
+    }
+
+    public void checkSpriteCollision(ArrayList<Sprite> sL) {
+        //right now this is only used for the players axe
+        for(Sprite s : sL) {
+            if(this.pos.distance(s.pos) < 5 && s instanceof Enemy) {
+                this.setAlive(false);//kill the axe
+                s.hurt();//hurt the enemy
+                if(s.getHealth() < 1) {//sprite is dead
+                    this.gameHandler.getPlayer().addScore(1);
+                }
+            }
+        }
+    }
+
+    public boolean isHit() {
+        return this.hit;
+    }
+
+    public void setHit(boolean b) {
+        this.hit = b;
+    }
+
+    public void hurt() {
+        takeHealth(1);
+        if(health < 1)
+            die();
+    }
+
+    public void die() {
+        setAlive(false);
     }
 
     public void addHealth(int amt) {

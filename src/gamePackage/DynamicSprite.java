@@ -1,6 +1,7 @@
 package gamePackage;
 
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 
 public class DynamicSprite extends Sprite {
 
@@ -29,16 +30,6 @@ public class DynamicSprite extends Sprite {
     @Override
     public void render(Graphics2D g2d) {
 
-    }
-
-    public void hurt() {
-        //takeHealth(1);
-        if(health < 1)
-            die();
-    }
-
-    public void die() {
-        setAlive(false);
     }
 
     public boolean canAttack() {

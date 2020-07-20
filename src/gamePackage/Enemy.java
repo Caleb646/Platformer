@@ -5,9 +5,9 @@ import java.util.ArrayList;
 public class Enemy extends DynamicSprite {
 
     protected ArrayList<Node> currentPath = new ArrayList<Node>();
-    protected float attackSpeed = 3.0f;
+    protected float attackSpeed = 2.0f;
     protected int attackRange = 7;
-    protected int vision = 50;
+    protected int vision = 25;
 
     protected float startX;
     protected float startY;
@@ -24,6 +24,7 @@ public class Enemy extends DynamicSprite {
         startY = y;
         patrolDistance = 100;
         jumpHeight = 18.0f;
+        health = 1;//TODO change before turning in
     }
 
     public void update() {

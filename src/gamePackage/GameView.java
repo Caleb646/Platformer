@@ -2,6 +2,7 @@ package gamePackage;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import javax.swing.JLabel;
 
 public class GameView {
     //jpanel
@@ -75,7 +76,7 @@ public class GameView {
         if(StateHandler.getCurrentState() != null) {
             StateHandler.getCurrentState().render(g2d);
         }
-        currentScreen.drawImage(offScreenBuffer, 0, 0, width, height, null);       
+        currentScreen.drawImage(offScreenBuffer, 0, 0, width, height, null);  
         g2d.dispose();
 
     }
@@ -104,7 +105,7 @@ public class GameView {
                 delta--;
             }
             if(timer >= 1_000_000_000) {
-                //System.out.println("Frames per second: "+ticks);
+                System.out.println("Frames per second: "+ticks);
                 ticks = 0;
                 timer = 0;
             }

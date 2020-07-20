@@ -9,6 +9,9 @@ public class GameAssets {
     //tiles
     public static BufferedImage floorImg, spikeImg, flagImg;
 
+    //items
+    public static BufferedImage pAxe;
+    public static BufferedImage[] healthItem;
     //enemies
     public static BufferedImage turretLeftImg, turretRightImg, turretBulletImg;
 
@@ -17,6 +20,7 @@ public class GameAssets {
     public static BufferedImage[] playerLeft, playerRight, playerJumpLeft, playerJumpRight;
 
     //player axe
+    
     public static BufferedImage[] pAxeLeft, pAxeRight;
 
     public static void loadAssets() {
@@ -61,8 +65,7 @@ public class GameAssets {
         playerJumpRight[2] = Utility.cropImage(playerSheet, PimgWidth*2, PimgHeight*2, PimgWidth, PimgHeight);
         playerJumpRight[3] = Utility.cropImage(playerSheet, PimgWidth*3, PimgHeight*2, PimgWidth, PimgHeight);
 
-        //player axe
-
+        //player axe        
         pAxeRight = new BufferedImage[4];
         pAxeRight[0] = Utility.cropImage(itemSheet, (int)(imgWidth*0.3f), (int) (imgHeight*2.3), (int)(imgWidth*0.7f), (int)(imgHeight*0.7f));
         pAxeRight[1] = Utility.cropImage(itemSheet, (int)(imgWidth*1.3f), (int) (imgHeight*2.3), (int)(imgWidth*0.7f), (int)(imgHeight*0.7f));
@@ -70,10 +73,17 @@ public class GameAssets {
         pAxeRight[3] = Utility.cropImage(itemSheet, (int)(imgWidth*3.3f), (int) (imgHeight*2.3), (int)(imgWidth*0.7f), (int)(imgHeight*0.7f));
 
         pAxeLeft = new BufferedImage[4];
-        pAxeLeft[0] = Utility.cropImage(itemSheet, (int)(imgWidth*0.3f), (int) (imgHeight*2.3), (int)(imgWidth*0.7f), (int)(imgHeight*0.7f));
-        pAxeLeft[1] = Utility.cropImage(itemSheet, (int)(imgWidth*4.3f), (int) (imgHeight*2.3), (int)(imgWidth*0.7f), (int)(imgHeight*0.7f));
-        pAxeLeft[2] = Utility.cropImage(itemSheet, (int)(imgWidth*5.3f), (int) (imgHeight*2.3), (int)(imgWidth*0.7f), (int)(imgHeight*0.7f));
-        pAxeLeft[3] = Utility.cropImage(itemSheet, (int)(imgWidth*6.3f), (int) (imgHeight*2.3), (int)(imgWidth*0.7f), (int)(imgHeight*0.7f));
+        pAxeLeft[0] = Utility.cropImage(itemSheet, (int)(imgWidth*4.3f), (int) (imgHeight*2.3), (int)(imgWidth*0.7f), (int)(imgHeight*0.7f));
+        pAxeLeft[1] = Utility.cropImage(itemSheet, (int)(imgWidth*5.3f), (int) (imgHeight*2.3), (int)(imgWidth*0.7f), (int)(imgHeight*0.7f));
+        pAxeLeft[2] = Utility.cropImage(itemSheet, (int)(imgWidth*6.3f), (int) (imgHeight*2.3), (int)(imgWidth*0.7f), (int)(imgHeight*0.7f));
+        pAxeLeft[3] = Utility.cropImage(itemSheet, (int)(imgWidth*7.3f), (int) (imgHeight*2.3), (int)(imgWidth*0.7f), (int)(imgHeight*0.7f));
+
+        //items 
+        pAxe = Utility.cropImage(itemSheet, (int)(imgWidth*8.3f), (int) (imgHeight*2.3), (int)(imgWidth*0.7f), (int)(imgHeight*0.7f));
+
+        healthItem = new BufferedImage[2];
+        healthItem[0] = Utility.cropImage(itemSheet, imgWidth*3, 0, imgWidth, imgHeight);
+        healthItem[1] = Utility.cropImage(itemSheet, imgWidth*4, 0, imgWidth, imgHeight);
 
     }
 }
