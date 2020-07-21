@@ -40,6 +40,10 @@ public class Tiles {
 
     }
 
+    public boolean isFlag() {
+        return false;
+    }
+
     public boolean canDamage() {
         return false;
     }
@@ -146,6 +150,11 @@ class FlagTile extends Tiles {
 
     public FlagTile(int id, int tW, int tH) {
         super(GameAssets.flagImg, id, tW, tH);
+    }
+
+    @Override
+    public boolean isFlag() {
+        return true;
     }
 }
 

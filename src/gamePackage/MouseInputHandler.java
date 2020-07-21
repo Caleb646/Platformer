@@ -5,6 +5,7 @@ import java.awt.event.MouseEvent;
 public class MouseInputHandler implements MouseListener {
 
     public boolean CLICK;
+    public boolean PRESSED;
 
     private float lastPressX;
     private float lastPressY;
@@ -13,8 +14,9 @@ public class MouseInputHandler implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        // TODO Auto-generated method stub
-
+        PRESSED = true;
+        lastPressX = e.getX();
+        lastPressY = e.getY();
     }
 
     @Override

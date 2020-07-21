@@ -4,7 +4,7 @@ import java.awt.event.KeyListener;
 
 public class KeyInputHandler implements KeyListener {
 
-    public boolean UP, DOWN, RIGHT, LEFT, GROUND, SPACE, SHOOT;
+    public boolean UP, DOWN, RIGHT, LEFT, GROUND, SPACE, SHOOT, PAUSE;
 
     public KeyInputHandler() {
 
@@ -32,9 +32,9 @@ public class KeyInputHandler implements KeyListener {
             case KeyEvent.VK_S: 
                 DOWN = true;
                 break;
-            // case KeyEvent.VK_F: 
-            //     SHOOT = true;
-            //     break;
+            case KeyEvent.VK_P: 
+                PAUSE = true;
+                break;
         }
     }
 
@@ -55,10 +55,9 @@ public class KeyInputHandler implements KeyListener {
             case KeyEvent.VK_S: 
                 DOWN = false;
                 break;
-
-            // case KeyEvent.VK_F: 
-            //     SHOOT = false;
-            //     break;
+            case KeyEvent.VK_P: 
+                PAUSE = false;
+                break;
         }
     }
 

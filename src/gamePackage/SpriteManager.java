@@ -42,4 +42,8 @@ public class SpriteManager {
     public void addSprite(Sprite s) {
         currentSprites.add(s);
     }
+
+    public void clearAllSprites() {
+        currentSprites.clear();
+    }
 }

@@ -17,7 +17,9 @@ public class GameView {
     private Camera camera;
 
     //states
-    private StateHandler gameState;
+    private GameState gameState;
+    private StartMenuState startMenuState;
+    private PauseState pauseState;
     
     private String title;
     private int width;
@@ -48,10 +50,21 @@ public class GameView {
         this.gameHandler = new GameHandler(this, keyInputHandler, mouseInputHandler);
         camera = new Camera(this.gameHandler, 0, 0);
 
-
+        //load sprite sheets
         GameAssets.loadAssets();
+
+        //setup different possible states
         gameState = new GameState(gameHandler);
-        StateHandler.setCurrentState(gameState);     
+        startMenuState = new StartMenuState(gameHandler);
+        pauseState = new PauseState(gameHandler);
+
+        //add states to StateHandler
+        StateHandler.setGameState(gameState);
+        StateHandler.setStartMenuState(startMenuState);
+        StateHandler.setPauseState(pauseState);
+
+        //set current state
+        StateHandler.setCurrentState(startMenuState);     
     }
 
     private void update() {

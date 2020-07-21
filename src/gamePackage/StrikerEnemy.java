@@ -8,7 +8,7 @@ public class StrikerEnemy extends Enemy {
     protected ArrayList<Node> currentPath = new ArrayList<Node>();
     protected float attackSpeed = 2.0f;
     protected int attackRange = 7;
-    protected int vision = 40;
+    protected int vision = 50;
 
     protected float startX;
     protected float startY;
@@ -29,7 +29,7 @@ public class StrikerEnemy extends Enemy {
         startX = x;
         startY = y;
         patrolDistance = 100;
-        jumpHeight = 15.0f;
+        jumpHeight = 20.0f;
         health = 5;
 
         strikerAttackingAnim.setInterval(1000);

@@ -37,4 +37,8 @@ public class ItemManager {
     public void addItem(Item it) {
         this.currentItems.add(it);
     }
+
+    public void clearAllItems() {
+        currentItems.clear();
+    }
 }

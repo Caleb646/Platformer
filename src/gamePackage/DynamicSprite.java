@@ -32,6 +32,33 @@ public class DynamicSprite extends Sprite {
 
     }
 
+    public void win() {
+        String currentLvl = WorldHandler.currentLvl.substring(0,1);
+        int lvlNum = Integer.parseInt(currentLvl);
+        if(lvlNum < Constants.maxNumLvls) {
+
+            //clear all prexisting sprites
+            gameHandler.getSpriteManager().clearAllSprites();
+            gameHandler.getItemManager().clearAllItems();
+
+            //add player back
+            Player p = gameHandler.getPlayer();
+            p.setPos(new Vector2D(100f, 100f));//reset player to starting pos
+            gameHandler.getSpriteManager().addSprite(p);
+
+            //increment chosen lvl by one
+            lvlNum += 1;
+            String lvlFname = ""+lvlNum+".txt";
+            gameHandler.getWorldHandler().setCurrentLevel(lvlFname);
+            
+        }
+
+        else {
+            System.out.println("You have beaten the game!!");
+            StateHandler.setCurrentState(StateHandler.getStartMenuState());//return to start menu
+        }
+    }
+
     public boolean canAttack() {
         currentAttackTime = System.currentTimeMillis();
         deltaAttackTime += currentAttackTime - lastAttackTime;
@@ -135,19 +162,32 @@ public class DynamicSprite extends Sprite {
         return false;
     }
 
-    public boolean tileCollision(int x, int y) {//checks for spike tiles
+    public boolean tileCollision(int x, int y) {
 
         Tiles tile = this.gameHandler.getWorldHandler().getTileType(x, y);
 
         if(tile.isSolid()) {
-            if(this instanceof Player && tile.isDamaging() && tile.canDamage()) {//checks for dmging tiles
-                this.hurt();                             
-                return true;
+
+                if(this instanceof Player && tile.isDamaging() && tile.canDamage()) {//checks for special tiles
+                        this.hurt();                             
+                        return true;
+                    }
+
+                else {
+
+                    return true;
+                }
+
             }
-            else {
-                return true;
-            }
+
+        else if(tile.isFlag()) {
+
+            this.win();
+
+            return false;
+
         }
+
         return false;
     }
 

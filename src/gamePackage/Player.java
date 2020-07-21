@@ -1,6 +1,7 @@
 package gamePackage;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.lang.Thread.State;
 import java.awt.Color;
 
 public class Player extends DynamicSprite {
@@ -27,7 +28,8 @@ public class Player extends DynamicSprite {
     public Player(GameHandler gameHandler, float x, float y, int w, int h) {
         super(gameHandler, x, y, w, h);
         this.gameHandler.setPlayer(this);
-        health = 100;//TODO change when finished
+        health = 25;//TODO change when finished
+        jumpHeight = 15.0f;
         attackInterval = 6000;
     }
 
@@ -77,6 +79,9 @@ public class Player extends DynamicSprite {
             jump();
         }
 
+        if(k.PAUSE)
+            StateHandler.setCurrentState(StateHandler.getPauseState());//pauses game
+
         velocity.addY(gravity.getY());
         move();
 
@@ -101,12 +106,14 @@ public class Player extends DynamicSprite {
         //its minus a minus so it gets reveresed. this shifts everything to the right as the player
         //moves until they reach the right most side
         g2d.drawImage(getAnimation(), (int) (pos.getX()-gameHandler.getCamera().getCameraX()), (int) (pos.getY()-gameHandler.getCamera().getCameraY()), spriteWidth, spriteHeight, null);
-        
+             
         //draw player states
+        String temp = WorldHandler.currentLvl.substring(0,1);
         g2d.setColor(Color.WHITE);
-        g2d.drawString("Health: "+ this.health, 20, 20);
-        g2d.drawString("Score: "+ this.score, 20, 40);
-        g2d.drawString("Current Ammo: "+ this.currentAmmo, 20, 60);
+        g2d.drawString("Lvl: "+temp, 20, 20);
+        g2d.drawString("Health: "+ this.health, 20, 40);
+        g2d.drawString("Score: "+ this.score, 20, 60);
+        g2d.drawString("Current Ammo: "+ this.currentAmmo, 20, 80);
         g2d.setColor(Color.BLACK);
         
     }
@@ -133,8 +140,20 @@ public class Player extends DynamicSprite {
 
     //getters and setters
 
+    public void setScore(int amt) {
+        this.score = amt;
+    }
+
+    public int getScore() {
+        return this.score;
+    }
+
     public int getCurrentAmmo() {
         return this.currentAmmo;
+    }
+
+    public void setCurrentAmmo(int amt) {
+        this.currentAmmo = amt;
     }
 
     public void addtoCurrentAmmo(int amt) {

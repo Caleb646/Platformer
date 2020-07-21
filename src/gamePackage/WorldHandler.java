@@ -9,26 +9,33 @@ public class WorldHandler {
 
     private int gameWidth;//in units
     private int gameHeight;
-    private String currentLvl;
+
+    //levels
+    public static String currentLvl;
+    public static String[] levelArray;
+    public static int maxLevels = 4;
+
+    //button player pressed in start menu
+    public static String btnPressedStartMenu;
+
+    //all tiles
     private int[][] worldTiles;
     
-    public WorldHandler(GameHandler handler, String path) {
+    public WorldHandler(GameHandler handler) {
+
         this.gameHandler = handler;
         this.gameHandler.setWorldHandler(this);
 
+        //managers
+        spriteManager = new SpriteManager(gameHandler);
+        itemManager = new ItemManager(gameHandler);
 
-        PathFinder pather = new PathFinder(gameHandler);
-        Player p = new Player(gameHandler, 500, 100, 28, 28);
+        determineLevel();//determine if there is saved data or not
+
+        PathFinder pather = new PathFinder(gameHandler);//create AI pathing
         
 
-
-        spriteManager = new SpriteManager(gameHandler);
-        spriteManager.addSprite(p);
-
-        itemManager = new ItemManager(gameHandler);      
-
-        currentLvl = path;
-        loadLevel();         
+        loadLevel();//load chosen level        
     }
 
     public void update() {
@@ -42,6 +49,7 @@ public class WorldHandler {
         int xEnd = (int) Math.min(gameWidth, (gameHandler.getCamera().getCameraX() + gameHandler.getGameWidth()) / Tiles.tileWidth + 1);
         int yStart = (int) Math.max(0, gameHandler.getCamera().getCameraY() / Tiles.tileHeight);
         int yEnd = (int) Math.min(gameHeight, (gameHandler.getCamera().getCameraY() + gameHandler.getGameHeight()) / Tiles.tileHeight + 1);
+
         for(int y = yStart; y<yEnd; y++) {
             for(int x = xStart; x<xEnd; x++) {
                 if(getTileType(x, y).getImage() == null)
@@ -52,6 +60,50 @@ public class WorldHandler {
         }
         spriteManager.render(g2d);
         itemManager.render(g2d);
+    }
+
+    public void createPlayer(float x, float y, int score, int health, int ammo) {
+
+        Player p = new Player(gameHandler, x, y, 28, 28);
+        spriteManager.addSprite(p);
+
+        if(score != 0)
+            p.setScore(score);
+        if(health != 0)
+            p.setHealth(health);
+        if(ammo != 0)
+            p.setCurrentAmmo(ammo);
+    }
+
+    public void determineLevel() {
+
+        if(btnPressedStartMenu.equals(Constants.startBtnName)) {
+            currentLvl = Constants.level1Fname;
+            createPlayer(100, 100, 0, 0, 0);
+        }
+        else if(btnPressedStartMenu.equals(Constants.loadBtnName)) {
+
+            boolean exists = Utility.fileExists(Constants.playerSaveFname);
+
+            if(exists) {
+
+                String[] playerData = Utility.loadFile(Constants.playerSaveFname).split("\\s+");
+                float x = Float.parseFloat(playerData[0]);
+                float y = Float.parseFloat(playerData[1]);
+                int score = Integer.parseInt(playerData[2]);
+                int health = Integer.parseInt(playerData[3]);
+                int ammo = Integer.parseInt(playerData[4]);
+                String level = playerData[5];
+
+                createPlayer(x, y, score, health, ammo);
+                currentLvl = level;
+            }
+            else {
+                System.out.println("Save File Did Not Exist");
+                currentLvl = Constants.level1Fname;
+                createPlayer(500, 100, 0, 0, 0);
+            }
+        }
     }
 
     public void loadLevel() {
@@ -67,7 +119,7 @@ public class WorldHandler {
                 int tileId = Integer.parseInt(lvlInfo[(x+y*gameWidth)+2]);
                 worldTiles[x][y] = tileId;
 
-                switch(tileId) {
+                switch(tileId) {//place none tiles entities
 
                 case 3: {//striker enemy
                     Enemy e = new StrikerEnemy(gameHandler, x*Tiles.tileWidth, y*Tiles.tileHeight, 28, 28);
@@ -84,7 +136,7 @@ public class WorldHandler {
                     itemManager.addItem(healthPickUp);
                     break;
                 }
-                case 7: {
+                case 7: {//turret enemy
                     Enemy e = new TurretEnemy(gameHandler, x*Tiles.tileWidth, y*Tiles.tileHeight, 32, 32);
                     spriteManager.addSprite(e);
                     break;
@@ -97,6 +149,18 @@ public class WorldHandler {
 }
 
     //getters and setters
+
+    public static String getBtnPressedStartMenu() {
+        return btnPressedStartMenu;
+    }
+
+    public static void setBtnPressedStartMenu(String s) {
+        btnPressedStartMenu = s;
+    }
+
+    public static String getCurrentLevel() {
+        return currentLvl;
+    }
 
     public void setCurrentLevel(String path) {
         currentLvl = path;

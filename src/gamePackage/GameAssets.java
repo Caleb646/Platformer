@@ -5,6 +5,9 @@ public class GameAssets {
 
     public static final int imgWidth = 64, imgHeight = 64;
     public static final int PimgWidth = 128, PimgHeight = 128;
+
+    //buttons
+    public static BufferedImage startBtn, saveBtn, loadBtn, mainMenuBtn;
     
     //tiles
     public static BufferedImage floorImg, spikeImg, flagImg;
@@ -32,6 +35,12 @@ public class GameAssets {
     public static void loadAssets() {
         BufferedImage itemSheet = Utility.loadImage("PlatformerItems.png");
         BufferedImage playerSheet = Utility.loadImage("PlayerAnimations.png");
+
+        //buttons
+        startBtn = Utility.cropImage(itemSheet, 0, imgHeight*3, imgWidth, imgHeight);
+        loadBtn = Utility.cropImage(itemSheet, imgWidth, imgHeight*3, imgWidth, imgHeight);
+        saveBtn = Utility.cropImage(itemSheet, imgWidth*2, imgHeight*3, imgWidth, imgHeight);
+        mainMenuBtn = Utility.cropImage(itemSheet, imgWidth*3, imgHeight*3, imgWidth, imgHeight);
 
         //tiles
         floorImg = Utility.cropImage(itemSheet, 0, 0, imgWidth, imgHeight);

@@ -8,8 +8,7 @@ public class GameState extends StateHandler {
 
     public GameState(GameHandler handler) {
         this.gameHandler = handler;
-        this.worldHandler = new WorldHandler(gameHandler, "TestWorld2.txt");
-        //this.gameHandler.setWorldHandler(worldHandler);
+        //this.worldHandler = new WorldHandler(gameHandler);
     }
 
     @Override
@@ -20,6 +19,10 @@ public class GameState extends StateHandler {
     @Override
     public void render(Graphics2D g2d) {
         worldHandler.render(g2d);
+    }
+
+    public void setup() {
+        this.worldHandler = new WorldHandler(gameHandler);
     }
     
 }

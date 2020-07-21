@@ -53,6 +53,11 @@ public abstract class Sprite {
 
     public void die() {
         setAlive(false);
+        if(this instanceof Player) {
+            //reset the state to the start menu
+            StateHandler.setCurrentState(StateHandler.getStartMenuState());
+            System.out.println("You died!!!!");
+        }
     }
 
     public void addHealth(int amt) {
@@ -65,6 +70,14 @@ public abstract class Sprite {
     }
 
     //getters and setters
+
+    public void setHealth(int amt) {
+        this.health = amt;
+    }
+
+    public int getHealth() {
+        return this.health;
+    }
 
     public int getMaxHealth() {
         return this.maxHealth;
@@ -80,10 +93,6 @@ public abstract class Sprite {
 
     public void setHit(boolean b) {
         this.hit = b;
-    }
-
-    public int getHealth() {
-        return this.health;
     }
 
     public Vector2D getPos() {
