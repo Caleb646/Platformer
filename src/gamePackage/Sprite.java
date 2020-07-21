@@ -9,6 +9,7 @@ public abstract class Sprite {
     protected int spriteWidth;
     protected int spriteHeight;
 
+    protected int maxHealth = 10;
     protected int health = 2;
     protected boolean alive = true;
 
@@ -30,26 +31,22 @@ public abstract class Sprite {
     public void checkSpriteCollision(ArrayList<Sprite> sL) {
         //right now this is only used for the players axe
         for(Sprite s : sL) {
-            if(this.pos.distance(s.pos) < 5 && s instanceof Enemy) {
+            if(this.pos.distance(s.pos) < 5 && s instanceof Enemy && this instanceof PlayerAxe) {
                 this.setAlive(false);//kill the axe
                 s.hurt();//hurt the enemy
                 if(s.getHealth() < 1) {//sprite is dead
                     this.gameHandler.getPlayer().addScore(1);
                 }
             }
+            else if(this instanceof TurretBullet && s instanceof Player && this.pos.distance(s.pos) < 5) {
+                s.hurt();
+            }
         }
-    }
-
-    public boolean isHit() {
-        return this.hit;
-    }
-
-    public void setHit(boolean b) {
-        this.hit = b;
     }
 
     public void hurt() {
         takeHealth(1);
+        setHit(true);
         if(health < 1)
             die();
     }
@@ -59,7 +56,8 @@ public abstract class Sprite {
     }
 
     public void addHealth(int amt) {
-        this.health += amt;
+        if(this.health+amt <= this.maxHealth)
+            this.health += amt;
     }
 
     public void takeHealth(int amt) {
@@ -67,6 +65,22 @@ public abstract class Sprite {
     }
 
     //getters and setters
+
+    public int getMaxHealth() {
+        return this.maxHealth;
+    }
+
+    public void setMaxHealth(int amt) {
+        this.maxHealth = amt;
+    }
+
+    public boolean isHit() {
+        return this.hit;
+    }
+
+    public void setHit(boolean b) {
+        this.hit = b;
+    }
 
     public int getHealth() {
         return this.health;

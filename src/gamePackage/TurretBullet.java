@@ -1,72 +1,56 @@
 package gamePackage;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 
-public class PlayerAxe extends DynamicSprite {
+public class TurretBullet extends DynamicSprite {
 
-    private float ySpeed = 3.75f;
-    private float xSpeed = 3.75f;
-    private float maxYSpeed = 5.0f;
-    private float maxXSpeed = 5.0f;
+    private float ySpeed = 2.75f;
+    private float xSpeed = 2.75f;
+    private float maxYSpeed = 4.0f;
+    private float maxXSpeed = 4.0f;
     private Vector2D target;
+
+    //animation
+    private Animater idleAnim = new Animater(GameAssets.turretBulletImg);
 
     //hitbox
     private Rectangle hitBox;
 
-    //animations
-    private Animater aRight = new Animater(GameAssets.pAxeRight);
-    private Animater aLeft = new Animater(GameAssets.pAxeLeft);
-
-    public PlayerAxe(GameHandler gameHandler, float x, float y, int w, int h, Vector2D target) {
+    public TurretBullet(GameHandler gameHandler, float x, float y, int w, int h, Vector2D target) {
         super(gameHandler, x, y, w, h);
-        this.target = pos.normalize(target);//normalize vector
-        aRight.setInterval(100);
-        aLeft.setInterval(100);//set animation interval   
-        gameHandler.getSpriteManager().addSprite(this); //add this so it can be drawn/rendered
-        
-        //partially setup hitbox. rest are in move method
+        this.gameHandler.getSpriteManager().addSprite(this);//add sprite
+
+        this.target = pos.normalize(target);
+        idleAnim.setInterval(300);
+
+
         hitBox = new Rectangle();
 
         hitBox.width = spriteWidth/2;
         hitBox.height = spriteHeight/2;
-    }
+    } 
 
     public void update() {
 
         velocity.addX(target.getX()*xSpeed);
         velocity.addY(target.getY()-0.01f*ySpeed);
 
-        aRight.update();
-        aLeft.update();
-
+        idleAnim.update();
         this.move();
     }
 
     public void render(Graphics2D g2d) {
-
-
-        g2d.drawImage(getAnimation(), (int) (pos.getX()-gameHandler.getCamera().getCameraX()),
+        g2d.drawImage(getCurrentAnimation(), (int) (pos.getX()-gameHandler.getCamera().getCameraX()),
         (int) (pos.getY()-gameHandler.getCamera().getCameraY()), spriteWidth, spriteHeight, null);
-
-        //g2d.fillRect((int) (pos.getX()-gameHandler.getCamera().getCameraX()),(int) (pos.getY()-gameHandler.getCamera().getCameraY()), spriteWidth, spriteHeight);
     }
-
-    public BufferedImage getAnimation() {
-
-        if(velocity.getX() > 0)
-            return aRight.getCurrentAnimation();
-        else if(velocity.getX() < 0)
-            return aLeft.getCurrentAnimation();
-        return aLeft.getCurrentAnimation();
-    }
-
+    
     @Override
     public void move() {
         //setup hit box
 
         hitBox.x = (int) (pos.getX() - spriteWidth*0.5f);
-        hitBox.y = (int) (pos.getY() - spriteHeight*0.7f);
+        hitBox.y = (int) (pos.getY() - spriteHeight*0.5f);
 
         boolean bX = canMoveX(hitBox);
         boolean bY = canMoveY(hitBox);
@@ -96,5 +80,8 @@ public class PlayerAxe extends DynamicSprite {
             velocity.setX(-maxXSpeed);
         }
     }
-    
+
+    public BufferedImage getCurrentAnimation() {
+        return idleAnim.getCurrentAnimation();
+    }
 }

@@ -1,7 +1,7 @@
 package gamePackage;
 
 import java.awt.Graphics2D;
-import java.util.ArrayList;
+import java.awt.Rectangle;
 
 public class DynamicSprite extends Sprite {
 
@@ -74,6 +74,38 @@ public class DynamicSprite extends Sprite {
         }
     }
 
+    //hitbox version
+    public boolean canMoveX(Rectangle hitBox) {
+        if(velocity.getX() > 0) {//running right
+            if(!tileCollision((int) (hitBox.x + hitBox.width + velocity.getX()) / Tiles.tileWidth, (int) hitBox.y  / Tiles.tileHeight) && //top right
+            !tileCollision((int) (hitBox.x  + hitBox.width + velocity.getX()) / Tiles.tileWidth, (int) (hitBox.y  + hitBox.height) / Tiles.tileHeight))//bottom right
+                return true;
+        }
+        else if(velocity.getX() < 0) {//running left
+            if(!tileCollision((int) (hitBox.x  + velocity.getX()) / Tiles.tileWidth, (int) hitBox.y  / Tiles.tileHeight) && //top left
+            !tileCollision((int) (hitBox.x  + velocity.getX()) / Tiles.tileWidth, (int) (hitBox.y  + hitBox.height) / Tiles.tileHeight))//bottom left
+                return true;
+        }
+        return false;
+    }
+
+    //hitbox version
+    public boolean canMoveY(Rectangle hitBox) {
+        if(velocity.getY() < 0) {//running up
+            if(!tileCollision((int) (hitBox.x ) / Tiles.tileWidth, (int) (hitBox.y  + velocity.getY()) / Tiles.tileHeight) && //top left
+            !tileCollision((int) (hitBox.x  + hitBox.width) / Tiles.tileWidth, (int) (hitBox.y  + velocity.getY()) / Tiles.tileHeight))//top right
+                return true;
+        }
+        else if(velocity.getY() > 0) {//running down
+            if(!tileCollision((int) (hitBox.x ) / Tiles.tileWidth, (int) (hitBox.y  + velocity.getY() + hitBox.height) / Tiles.tileHeight) && //bottom left
+            !tileCollision((int) (hitBox.x  + hitBox.width) / Tiles.tileWidth, (int) (hitBox.y  + velocity.getY() + hitBox.height) / Tiles.tileHeight))//bottom right
+                return true;
+        }
+        velocity.setY(0);
+        return false;
+    }
+
+
     public boolean canMoveX() {
         if(velocity.getX() > 0) {//running right
             if(!tileCollision((int) (pos.getX() + spriteWidth + velocity.getX()) / Tiles.tileWidth, (int) pos.getY() / Tiles.tileHeight) && //top right
@@ -103,9 +135,19 @@ public class DynamicSprite extends Sprite {
         return false;
     }
 
-    public boolean tileCollision(int x, int y) {
-        if(this.gameHandler.getWorldHandler().getTileType(x, y).isSolid())
-            return true;
+    public boolean tileCollision(int x, int y) {//checks for spike tiles
+
+        Tiles tile = this.gameHandler.getWorldHandler().getTileType(x, y);
+
+        if(tile.isSolid()) {
+            if(this instanceof Player && tile.isDamaging() && tile.canDamage()) {//checks for dmging tiles
+                this.hurt();                             
+                return true;
+            }
+            else {
+                return true;
+            }
+        }
         return false;
     }
 

@@ -25,6 +25,7 @@ public class GameHandler {
 
     //managers
     private SpriteManager spriteManager;
+    private ItemManager itemManager;
 
     public GameHandler(GameView game, KeyInputHandler keyInputHandler, MouseInputHandler m) {
         this.game = game;
@@ -33,6 +34,14 @@ public class GameHandler {
     }
 
     // getters and setters
+
+    public void setItemManager(ItemManager it) {
+        this.itemManager = it;
+    }
+
+    public ItemManager getItemManager() {
+        return this.itemManager;
+    }
 
     public MouseInputHandler getMouseInputHandler() {
         return this.mouseInputHandler;

@@ -12,8 +12,14 @@ public class GameAssets {
     //items
     public static BufferedImage pAxe;
     public static BufferedImage[] healthItem;
-    //enemies
-    public static BufferedImage turretLeftImg, turretRightImg, turretBulletImg;
+    //striker enemy
+    public static BufferedImage strikerIdleImg;
+    public static BufferedImage[] strikerHitAnim, strikerAttackingAnim;
+
+
+    //turret enemy
+    public static BufferedImage turretLeftImg, turretRightImg;
+    public static BufferedImage[] turretBulletImg;
 
     //player
     public static BufferedImage playerIdle;
@@ -32,10 +38,24 @@ public class GameAssets {
         spikeImg = Utility.cropImage(itemSheet, imgWidth, 0, imgWidth, imgHeight);
         flagImg = Utility.cropImage(itemSheet, imgWidth*2, 0, imgWidth, imgHeight);
 
-        //enemies
+        //turret enemy
         turretLeftImg = Utility.cropImage(itemSheet, 0, imgHeight, imgWidth, imgHeight);
         turretRightImg = Utility.cropImage(itemSheet, imgWidth, imgHeight, imgWidth, imgHeight);
-        turretBulletImg = Utility.cropImage(itemSheet, imgWidth*2, imgHeight, imgWidth, imgHeight);
+
+        turretBulletImg = new BufferedImage[2];
+        turretBulletImg[0] = Utility.cropImage(itemSheet, imgWidth*2, imgHeight, imgWidth, imgHeight);
+        turretBulletImg[1] = Utility.cropImage(itemSheet, imgWidth*3, imgHeight, imgWidth, imgHeight);
+
+        //striker enemy
+        strikerIdleImg =  Utility.cropImage(itemSheet, imgWidth*4, imgHeight, imgWidth, imgHeight);
+
+        strikerHitAnim = new BufferedImage[2];
+        strikerHitAnim[0] = Utility.cropImage(itemSheet, imgWidth*5, imgHeight, imgWidth, imgHeight);
+        strikerHitAnim[1] = Utility.cropImage(itemSheet, imgWidth*6, imgHeight, imgWidth, imgHeight);
+
+        strikerAttackingAnim = new BufferedImage[2];
+        strikerAttackingAnim[0] = Utility.cropImage(itemSheet, imgWidth*7, imgHeight, imgWidth, imgHeight);
+        strikerAttackingAnim[1] = Utility.cropImage(itemSheet, imgWidth*8, imgHeight, imgWidth, imgHeight);
 
         //player
         playerIdle = Utility.cropImage(playerSheet, 0, 0, PimgWidth, PimgHeight);
@@ -79,7 +99,7 @@ public class GameAssets {
         pAxeLeft[3] = Utility.cropImage(itemSheet, (int)(imgWidth*7.3f), (int) (imgHeight*2.3), (int)(imgWidth*0.7f), (int)(imgHeight*0.7f));
 
         //items 
-        pAxe = Utility.cropImage(itemSheet, (int)(imgWidth*8.3f), (int) (imgHeight*2.3), (int)(imgWidth*0.7f), (int)(imgHeight*0.7f));
+        pAxe = Utility.cropImage(itemSheet, imgWidth*8,  imgHeight*2, imgWidth, imgHeight);
 
         healthItem = new BufferedImage[2];
         healthItem[0] = Utility.cropImage(itemSheet, imgWidth*3, 0, imgWidth, imgHeight);

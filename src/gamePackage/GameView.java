@@ -105,7 +105,7 @@ public class GameView {
                 delta--;
             }
             if(timer >= 1_000_000_000) {
-                System.out.println("Frames per second: "+ticks);
+                //System.out.println("Frames per second: "+ticks);
                 ticks = 0;
                 timer = 0;
             }

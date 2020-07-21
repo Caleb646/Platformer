@@ -5,6 +5,7 @@ public class WorldHandler {
     //0 open space, 1 floor
     private GameHandler gameHandler;
     private SpriteManager spriteManager;
+    private ItemManager itemManager;
 
     private int gameWidth;//in units
     private int gameHeight;
@@ -17,24 +18,22 @@ public class WorldHandler {
 
 
         PathFinder pather = new PathFinder(gameHandler);
-        Player p = new Player(gameHandler, 500, 100, 30, 30);
+        Player p = new Player(gameHandler, 500, 100, 28, 28);
         
 
 
         spriteManager = new SpriteManager(gameHandler);
         spriteManager.addSprite(p);
-        
+
+        itemManager = new ItemManager(gameHandler);      
 
         currentLvl = path;
-        loadLevel();
-
-        
-        
-        
+        loadLevel();         
     }
 
     public void update() {
         spriteManager.update();
+        itemManager.update();
     }
 
     public void render(Graphics2D g2d) {
@@ -52,26 +51,50 @@ public class WorldHandler {
             }
         }
         spriteManager.render(g2d);
+        itemManager.render(g2d);
     }
 
     public void loadLevel() {
+
         String[] lvlInfo = Utility.loadFile(currentLvl).split("\\s+");
         gameWidth = Integer.parseInt(lvlInfo[0]);
         gameHeight = Integer.parseInt(lvlInfo[1]);
         worldTiles = new int[gameWidth][gameHeight];
+
         for(int y = 0; y<gameHeight; y++) {
             for(int x = 0; x<gameWidth; x++) {
-                worldTiles[x][y] = Integer.parseInt(lvlInfo[(x+y*gameWidth)+2]);
 
-                if(Integer.parseInt(lvlInfo[(x+y*gameWidth)+2]) == 3) {//create enemies if map space is a 3
-                    Enemy e = new Enemy(gameHandler, x*Tiles.tileWidth, y*Tiles.tileHeight, 30, 30);
+                int tileId = Integer.parseInt(lvlInfo[(x+y*gameWidth)+2]);
+                worldTiles[x][y] = tileId;
+
+                switch(tileId) {
+
+                case 3: {//striker enemy
+                    Enemy e = new StrikerEnemy(gameHandler, x*Tiles.tileWidth, y*Tiles.tileHeight, 28, 28);
                     spriteManager.addSprite(e);
+                    break;
+                }
+                case 5:{//ammo pickup
+                    Item ammoPickUp = new AmmoPickUp(gameHandler, x*Tiles.tileWidth, y*Tiles.tileHeight, tileId);
+                    itemManager.addItem(ammoPickUp);
+                    break;
+                }
+                case 6: {//health pickup
+                    Item healthPickUp = new HealthPickUp(gameHandler, x*Tiles.tileWidth, y*Tiles.tileHeight, tileId);
+                    itemManager.addItem(healthPickUp);
+                    break;
+                }
+                case 7: {
+                    Enemy e = new TurretEnemy(gameHandler, x*Tiles.tileWidth, y*Tiles.tileHeight, 32, 32);
+                    spriteManager.addSprite(e);
+                    break;
                 }
             }
-        }
-        this.gameHandler.getPathFinder().createNodes();//creates node and edges graph
-        //this.gameHandler.getPathFinder().printGraph();
+        }     
     }
+    this.gameHandler.getPathFinder().createNodes();  //creates node and edges graph 
+    //this.gameHandler.getPathFinder().printGraph();
+}
 
     //getters and setters
 

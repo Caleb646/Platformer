@@ -18,12 +18,14 @@ public class SpriteManager {
 
         for(int i = currentSprites.size()-1; i>-1; i--) {
             Sprite s = currentSprites.get(i);
-            if(s instanceof PlayerAxe)
-                s.checkSpriteCollision(this.currentSprites);
             if(!s.isAlive()) {
                 currentSprites.remove(s);
                 return;
             }
+            if(s instanceof PlayerAxe)
+                s.checkSpriteCollision(this.currentSprites);
+            else if(s instanceof TurretBullet)
+                s.checkSpriteCollision(this.currentSprites);
             s.update();
         }
         // for(Sprite s : currentSprites) {

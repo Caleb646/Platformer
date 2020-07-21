@@ -138,7 +138,8 @@ public class Player extends DynamicSprite {
     }
 
     public void addtoCurrentAmmo(int amt) {
-        this.currentAmmo += amt;
+        if(this.currentAmmo + amt <= maxAmmo)
+            this.currentAmmo += amt;
     }
 
     public void subtractfromCurrentAmmo(int amt) {
